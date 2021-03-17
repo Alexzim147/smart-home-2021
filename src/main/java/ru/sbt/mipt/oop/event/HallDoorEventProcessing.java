@@ -13,16 +13,12 @@ public class HallDoorEventProcessing implements EventProcessing {
     public void processEvent(SensorEvent event, SmartHome smartHome) {
         if (isDoorEvent(event) && isHallDoorEvent(smartHome, event)) {
             if (event.getType() == DOOR_CLOSED) {
-                processClosingDoorEvent(smartHome);
-            }
-        }
-    }
-
-    private void processClosingDoorEvent(SmartHome smartHome) {
-        for (Room room : smartHome.getRooms()) {
-            for (Light light : room.getLights()) {
-                light.setOn(false);
-                System.out.println("Light " + light.getId() + " in room " + room.getName() + " was turned off.");
+                Action action = object -> {
+                    if (! (object instanceof Light)) { return; }
+                    Light asLight = (Light) object;
+                    asLight.setOn(false);
+                };
+                smartHome.execute(action);
             }
         }
     }

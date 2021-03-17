@@ -4,9 +4,6 @@ import ru.sbt.mipt.oop.objects.SmartHome;
 
 import java.util.ArrayList;
 
-import static ru.sbt.mipt.oop.event.SensorEventType.*;
-import static ru.sbt.mipt.oop.event.SensorEventType.DOOR_CLOSED;
-
 public class EventProcessingCycle {
     private final SmartHome smartHome;
     private final SensorEventGenerator sensorEventGenerator;

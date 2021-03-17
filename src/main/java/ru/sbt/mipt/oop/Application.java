@@ -18,7 +18,7 @@ public class Application {
 
     public static void main(String... args) throws IOException {
         // считываем состояние дома из файла
-        Application application = new Application(new JsonSmartHomeLoader("smart-home-1.js"));
+        Application application = new Application(new JsonSmartHomeLoader("smart-home-1.json"));
         application.act();
     }
 
