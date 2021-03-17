@@ -1,43 +1,23 @@
 package ru.sbt.mipt.oop.event;
 
-import ru.sbt.mipt.oop.command.CommandType;
 import ru.sbt.mipt.oop.command.SensorCommand;
 import ru.sbt.mipt.oop.objects.Door;
-import ru.sbt.mipt.oop.objects.Light;
 import ru.sbt.mipt.oop.objects.Room;
 import ru.sbt.mipt.oop.objects.SmartHome;
 
+import static ru.sbt.mipt.oop.event.SensorEventType.DOOR_CLOSED;
 import static ru.sbt.mipt.oop.event.SensorEventType.DOOR_OPEN;
 
 public class DoorEventProcessing implements EventProcessing {
-    private final SensorEvent event;
-    private final SmartHome smartHome;
-
-    DoorEventProcessing(SensorEvent event, SmartHome smartHome) {
-        this.event = event;
-        this.smartHome = smartHome;
-    }
-    public void processEvent() {
-        // событие от двери
-        for (Room room : smartHome.getRooms()) {
-            for (Door door : room.getDoors()) {
-                if (door.getId().equals(event.getObjectId())) {
-                    if (event.getType() == DOOR_OPEN) {
-                        door.setOpen(true);
-                        System.out.println("Door " + door.getId() + " in room " + room.getName() + " was opened.");
-                    } else {
-                        door.setOpen(false);
-                        System.out.println("Door " + door.getId() + " in room " + room.getName() + " was closed.");
-                        // если мы получили событие о закрытие двери в холле - это значит, что была закрыта входная дверь.
-                        // в этом случае мы хотим автоматически выключить свет во всем доме (это же умный дом!)
-                        if (room.getName().equals("hall")) {
-                            for (Room homeRoom : smartHome.getRooms()) {
-                                for (Light light : homeRoom.getLights()) {
-                                    light.setOn(false);
-                                    SensorCommand command = new SensorCommand(CommandType.LIGHT_OFF, light.getId());
-                                    sendCommand(command);
-                                }
-                            }
+    public void processEvent(SensorEvent event, SmartHome smartHome) {
+        if (isDoorEvent(event)) {
+            for (Room room : smartHome.getRooms()) {
+                for (Door door : room.getDoors()) {
+                    if (door.getId().equals(event.getObjectId())) {
+                        if (event.getType() == DOOR_OPEN) {
+                            processOpeningDoorEvent(door, room);
+                        } else {
+                            processClosingDoorEvent(door, room);
                         }
                     }
                 }
@@ -45,7 +25,18 @@ public class DoorEventProcessing implements EventProcessing {
         }
     }
 
-    private void sendCommand(SensorCommand command) {
-        System.out.println("Pretend we're sending command " + command);
+    private void processOpeningDoorEvent(Door door, Room room) {
+        door.setOpen(true);
+        System.out.println("Door " + door.getId() + " in room " + room.getName() + " was opened.");
     }
+
+    private void processClosingDoorEvent(Door door, Room room) {
+        door.setOpen(false);
+        System.out.println("Door " + door.getId() + " in room " + room.getName() + " was closed.");
+    }
+
+    private boolean isDoorEvent(SensorEvent event) {
+        return event.getType() == DOOR_OPEN || event.getType() == DOOR_CLOSED;
+    }
+
 }
