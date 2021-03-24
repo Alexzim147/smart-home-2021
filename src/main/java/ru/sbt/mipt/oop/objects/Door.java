@@ -5,14 +5,16 @@ import ru.sbt.mipt.oop.event.Action;
 public class Door implements Actionable {
     private final String id;
     private boolean isOpen;
+    private boolean isHall;
 
     public boolean isOpen() {
         return isOpen;
     }
 
-    public Door(boolean isOpen, String id) {
+    public Door(boolean isOpen, String id, boolean isHall) {
         this.isOpen = isOpen;
         this.id = id;
+        this.isHall = isHall;
     }
 
     @Override
