@@ -1,5 +1,6 @@
 package ru.sbt.mipt.oop;
 
+import ru.sbt.mipt.oop.alarm.Alarm;
 import ru.sbt.mipt.oop.event.*;
 import ru.sbt.mipt.oop.loader.JsonSmartHomeLoader;
 import ru.sbt.mipt.oop.loader.SmartHomeLoader;
@@ -24,11 +25,14 @@ public class Application {
 
     public void act() {
         SensorEventGenerator sensorEventGenerator = new SensorEventGenerator();
+        Alarm alarm = new Alarm();
 
         ArrayList<EventProcessing> eventProcessings = new ArrayList<>(Arrays.asList(
                 new LightEventProcessing(),
                 new DoorEventProcessing(),
-                new HallDoorEventProcessing()
+                new HallDoorEventProcessing(),
+                new AlarmActivatingProcessing(alarm),
+                new AlarmDeactivatingProcessing(alarm)
         ));
         SmartHome smartHome = smartHomeLoader.loadSmartHome();
         EventProcessingCycle eventProcessingCycle = new EventProcessingCycle(smartHome, sensorEventGenerator, eventProcessings);
