@@ -8,8 +8,12 @@ public class Alarm {
         state = newState;
     }
 
-    public AlarmState getState() {
-        return state;
+    public boolean isActivated() {
+        return !(state instanceof AlarmDeactivation);
+    }
+
+    public boolean isBeeping() {
+        return state instanceof AlarmBeeping;
     }
 
     void setAccessCode(int code) {

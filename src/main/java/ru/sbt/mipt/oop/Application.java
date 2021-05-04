@@ -28,9 +28,11 @@ public class Application {
         Alarm alarm = new Alarm();
 
         ArrayList<EventProcessing> eventProcessings = new ArrayList<>(Arrays.asList(
-                new LightEventProcessing(),
-                new DoorEventProcessing(),
-                new HallDoorEventProcessing(),
+                new AlarmDecoratorEventProcessing(Arrays.asList(
+                        new LightEventProcessing(),
+                        new DoorEventProcessing(),
+                        new HallDoorEventProcessing()
+                )),
                 new AlarmActivatingProcessing(alarm),
                 new AlarmDeactivatingProcessing(alarm)
         ));

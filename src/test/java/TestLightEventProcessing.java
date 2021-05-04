@@ -4,7 +4,6 @@ import ru.sbt.mipt.oop.event.SensorEvent;
 import ru.sbt.mipt.oop.event.EventType;
 import ru.sbt.mipt.oop.loader.JsonSmartHomeLoader;
 import ru.sbt.mipt.oop.objects.Light;
-import ru.sbt.mipt.oop.objects.Room;
 import ru.sbt.mipt.oop.objects.SmartHome;
 
 public class TestLightEventProcessing {
@@ -14,14 +13,7 @@ public class TestLightEventProcessing {
         LightEventProcessing lightEventProcessing = new LightEventProcessing();
         SensorEvent sensorEvent = new SensorEvent(EventType.LIGHT_ON, "1");
         lightEventProcessing.processEvent(sensorEvent, smartHome);
-        Light changedLight = null;
-        for (Room room : smartHome.getRooms()) {
-            for (Light light : room.getLights()){
-                if (light.getId().equals("1")) {
-                    changedLight = light;
-                }
-            }
-        }
+        Light changedLight = TestSmartHomeUtils.getLightById(smartHome,"1");
         assert(changedLight.isOn());
     }
 
@@ -31,14 +23,7 @@ public class TestLightEventProcessing {
         LightEventProcessing lightEventProcessing = new LightEventProcessing();
         SensorEvent sensorEvent = new SensorEvent(EventType.LIGHT_OFF, "1");
         lightEventProcessing.processEvent(sensorEvent, smartHome);
-        Light changedLight = null;
-        for (Room room : smartHome.getRooms()) {
-            for (Light light : room.getLights()){
-                if (light.getId().equals("1")) {
-                    changedLight = light;
-                }
-            }
-        }
+        Light changedLight = TestSmartHomeUtils.getLightById(smartHome,"1");
         assert(!changedLight.isOn());
     }
 

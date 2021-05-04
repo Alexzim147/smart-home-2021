@@ -1,8 +1,9 @@
 package ru.sbt.mipt.oop.alarm;
 
-public class AlarmDeactivation extends AlarmState {
+public class AlarmDeactivation implements AlarmState {
+    private final Alarm alarm;
     public AlarmDeactivation(Alarm alarm) {
-        super(alarm);
+        this.alarm = alarm;
     }
 
     @Override

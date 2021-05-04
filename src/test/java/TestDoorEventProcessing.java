@@ -14,14 +14,7 @@ public class TestDoorEventProcessing {
         DoorEventProcessing doorEventProcessing = new DoorEventProcessing();
         SensorEvent sensorEvent = new SensorEvent(EventType.DOOR_CLOSED, "1");
         doorEventProcessing.processEvent(sensorEvent, smartHome);
-        Door changedDoor = null;
-        for (Room room : smartHome.getRooms()) {
-            for (Door door : room.getDoors()){
-                if (door.getId().equals("1")) {
-                    changedDoor = door;
-                }
-            }
-        }
+        Door changedDoor = TestSmartHomeUtils.getDoorById(smartHome, "1");
         assert(!changedDoor.isOpen());
     }
 
@@ -31,14 +24,7 @@ public class TestDoorEventProcessing {
         DoorEventProcessing doorEventProcessing = new DoorEventProcessing();
         SensorEvent sensorEvent = new SensorEvent(EventType.DOOR_OPEN, "1");
         doorEventProcessing.processEvent(sensorEvent, smartHome);
-        Door changedDoor = null;
-        for (Room room : smartHome.getRooms()) {
-            for (Door door : room.getDoors()){
-                if (door.getId().equals("1")) {
-                    changedDoor = door;
-                }
-            }
-        }
+        Door changedDoor = TestSmartHomeUtils.getDoorById(smartHome, "1");
         assert(changedDoor.isOpen());
     }
 }
