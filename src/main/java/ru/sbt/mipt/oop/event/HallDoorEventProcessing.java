@@ -5,42 +5,64 @@ import ru.sbt.mipt.oop.objects.Light;
 import ru.sbt.mipt.oop.objects.Room;
 import ru.sbt.mipt.oop.objects.SmartHome;
 
-import static ru.sbt.mipt.oop.event.SensorEventType.DOOR_CLOSED;
-import static ru.sbt.mipt.oop.event.SensorEventType.DOOR_OPEN;
+import static ru.sbt.mipt.oop.event.EventType.DOOR_CLOSED;
+import static ru.sbt.mipt.oop.event.EventType.DOOR_OPEN;
 
 public class HallDoorEventProcessing implements EventProcessing {
     @Override
-    public void processEvent(SensorEvent event, SmartHome smartHome) {
-        if (isDoorEvent(event) && isHallDoorEvent(smartHome, event)) {
-            if (event.getType() == DOOR_CLOSED) {
-                processClosingDoorEvent(smartHome);
-            }
-        }
-    }
-
-    private void processClosingDoorEvent(SmartHome smartHome) {
-        for (Room room : smartHome.getRooms()) {
-            for (Light light : room.getLights()) {
-                light.setOn(false);
-                System.out.println("Light " + light.getId() + " in room " + room.getName() + " was turned off.");
-            }
-        }
-    }
-
-    private boolean isDoorEvent(SensorEvent event) {
-        return event.getType() == DOOR_CLOSED || event.getType() == DOOR_OPEN;
-    }
-
-    private boolean isHallDoorEvent(SmartHome smartHome, SensorEvent event) {
-        for (Room room : smartHome.getRooms()) {
-            for (Door door : room.getDoors()) {
-                if (door.getId().equals(event.getObjectId())) {
-                    if (room.getName().equals("hall")) {
-                        return true;
-                    }
+    public void processEvent(Event event, SmartHome smartHome) {
+        if (isDoorEvent(event)) {
+            Action action = roomCandidate -> {
+                if (!(event instanceof SensorEvent)) {
+                    return;
                 }
-            }
+                SensorEvent sensorEvent = (SensorEvent) event;
+
+                if (!(roomCandidate instanceof Room)) {
+                    return;
+                }
+
+                Room room = (Room) roomCandidate;
+
+                if (!room.getName().equals("hall")) {
+                    return;
+                }
+
+                Action roomAction = doorCandidate -> {
+                    if (!(doorCandidate instanceof Door)) {
+                        return;
+                    }
+                    Door door = (Door) doorCandidate;
+
+                    if (!door.getId().equals(sensorEvent.getObjectId())) {
+                        return;
+                    }
+
+                    if (sensorEvent.getType() == DOOR_CLOSED) {
+                        processDoorClosingEvent(smartHome);
+                    }
+
+                };
+                room.execute(roomAction);
+            };
+            smartHome.execute(action);
         }
-        return false;
+    }
+
+    private void processDoorClosingEvent(SmartHome smartHome) {
+        smartHome.execute(lightCandidate -> {
+            if (!(lightCandidate instanceof Light)) {
+                return;
+            }
+
+            Light light = (Light) lightCandidate;
+
+            light.setOn(false);
+        });
+    }
+
+
+    private boolean isDoorEvent(Event event) {
+        return event.getType() == DOOR_CLOSED || event.getType() == DOOR_OPEN;
     }
 }

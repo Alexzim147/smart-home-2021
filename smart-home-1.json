@@ -14,7 +14,8 @@
       "doors": [
         {
           "id": "1",
-          "isOpen": false
+          "isOpen": false,
+          "isHall": false
         }
       ],
       "name": "kitchen"
@@ -29,7 +30,8 @@
       "doors": [
         {
           "id": "2",
-          "isOpen": false
+          "isOpen": false,
+          "isHall":false
         }
       ],
       "name": "bathroom"
@@ -52,7 +54,8 @@
       "doors": [
         {
           "id": "3",
-          "isOpen": true
+          "isOpen": true,
+          "isHall":false
         }
       ],
       "name": "bedroom"
@@ -75,7 +78,8 @@
       "doors": [
         {
           "id": "4",
-          "isOpen": false
+          "isOpen": false,
+          "isHall": true
         }
       ],
       "name": "hall"

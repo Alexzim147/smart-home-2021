@@ -1,29 +1,27 @@
 package ru.sbt.mipt.oop.event;
 
 import ru.sbt.mipt.oop.objects.Light;
-import ru.sbt.mipt.oop.objects.Room;
 import ru.sbt.mipt.oop.objects.SmartHome;
 
-import static ru.sbt.mipt.oop.event.SensorEventType.LIGHT_OFF;
-import static ru.sbt.mipt.oop.event.SensorEventType.LIGHT_ON;
+import static ru.sbt.mipt.oop.event.EventType.*;
 
 public class LightEventProcessing implements EventProcessing {
     @Override
-    public void processEvent(SensorEvent event, SmartHome smartHome) {
-        if (isLightEvent(event)) {
-            for (Room room : smartHome.getRooms()) {
-                for (Light light : room.getLights()) {
-                    if (light.getId().equals(event.getObjectId())) {
-                        if (event.getType() == LIGHT_ON) {
-                            light.setOn(true);
-                            System.out.println("Light " + light.getId() + " in room " + room.getName() + " was turned on.");
-                        } else {
-                            light.setOn(false);
-                            System.out.println("Light " + light.getId() + " in room " + room.getName() + " was turned off.");
-                        }
-                    }
+    public void processEvent(Event event, SmartHome smartHome) {
+        if (!(event instanceof SensorEvent)) {
+            return;
+        }
+
+        SensorEvent sensorEvent = (SensorEvent) event;
+        if (isLightEvent(sensorEvent)) {
+            Action action = object -> {
+                if (! (object instanceof Light)) { return; }
+                Light asLight = (Light) object;
+                if (asLight.getId().equals(sensorEvent.getObjectId())) {
+                    asLight.setOn(sensorEvent.getType() == LIGHT_ON);
                 }
-            }
+            };
+            smartHome.execute(action);
         }
     }
 
