@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class SmartHome implements Actionable {
-    private Collection<Room> rooms;
-    private Alarm alarm;
+    private final Collection<Room> rooms;
+    private Alarm alarm = new Alarm();
 
     public SmartHome() {
         rooms = new ArrayList<>();
